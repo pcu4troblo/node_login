@@ -8,8 +8,8 @@ var bodyParser = require ('./node_modules/body-parser');
 var con = mysql.createConnection({
 localhost : 'localhost',
 user : 'root',
-password: 'root',
-database : 'demonodejs'
+password: '',
+database : 'DemoNodeJS'
 
 });
 //-----
@@ -25,7 +25,8 @@ app.post('/register/', (req, res, next) => {
     var plaint_password = post_data.password;
     var name = post_data.name;
     var email = post_data.email;
-
+    console.log(post_data);
+    console.log(req);
     con.query('SELECT * FROM user where email=?',[email],function(err,result,fields){
         con.on('error', function(err){
             console.log('[MYSQL error]', err);
@@ -34,13 +35,13 @@ app.post('/register/', (req, res, next) => {
     if(result && result.length)
     res.json('user already exists!!!');
     else{
-        con.query('INSERT INTO `user`(`unique_id`, `name`, `email`, `encrypted_password`, `salt`, `created_at`, `updated_at`) VALUES (?,?,?,?,NOW(),NOW())', [uid, name, email, plaint_password]), function(err,result,fields){
+        con.query('INSERT INTO `user`(`unique_id`, `name`, `email`, `encrypted_password`, `created_at`, `updated_at`) VALUES (?,?,?,?,NOW(),NOW())', [uid, name, email, plaint_password], function(err,result,fields){
             con.on('error', function(err){
                 console.log('[MYSQL error]', err);
                 res.json('register error:', err)
             });
             res.json('register succesfull');
-        };
+        })
     }
         
     });
